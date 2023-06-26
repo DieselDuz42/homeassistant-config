@@ -1,0 +1,29 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+homeassistant: !include homeassistant.yaml
+
+
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+recorder:
+    db_url: !secret mariadb_url
+    
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+
+input_number: !include_dir_named input_number/
+input_boolean: !include_dir_named input_boolean/
+input_select: !include_dir_named input_select/
+input_datetime: !include_dir_named input_datetime/
+input_text: !include_dir_named input_text/
+timer: !include_dir_named timers/
