@@ -1,0 +1,7 @@
+name: Energy kWh Cost Mid-Peak
+icon: mdi:currency-usd
+mode: box
+unit_of_measurement: "USD/kWh"
+min: 0.001
+max: 1
+initial: 0.113
