@@ -1,0 +1,9 @@
+name: Home
+latitude: !secret latitude
+longitude: !secret longitude
+elevation: !secret elevation
+country: US
+language: en
+currency: USD
+time_zone: America/Detroit
+unit_system: imperial

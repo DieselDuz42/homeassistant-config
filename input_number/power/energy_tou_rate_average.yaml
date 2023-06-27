@@ -1,0 +1,7 @@
+name: Energy kWh Cost Average
+icon: mdi:currency-usd
+mode: box
+unit_of_measurement: "CAD/kWh"
+min: 0.001
+max: 1
+initial: 0.10325
