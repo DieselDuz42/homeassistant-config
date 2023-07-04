@@ -4,4 +4,4 @@ mode: box
 unit_of_measurement: "USD/kWh"
 min: 0.001
 max: 1
-initial: 0.17
+initial: 0.223

@@ -13,8 +13,7 @@ frontend:
 tts:
   - platform: google_translate
 
-recorder:
-    db_url: !secret mariadb_url
+recorder: !include recorder.yaml
     
 automation: !include automations.yaml
 script: !include scripts.yaml

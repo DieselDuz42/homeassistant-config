@@ -1,0 +1,13 @@
+---
+# The recorder component is storing details in a database which
+# then are handled by the history component.
+#
+# https://www.home-assistant.io/integrations/recorder/
+#
+
+db_url: !secret mariadb_url
+
+exclude:
+  entities:
+    - sensor.date
+    - sensor.time
