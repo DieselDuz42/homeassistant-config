@@ -1,0 +1,10 @@
+#
+# https://www.home-assistant.io/integrations/http/
+#
+
+ip_ban_enabled: true
+login_attempts_threshold: 5
+
+#use_x_forwarded_for: true
+#trusted_proxies:
+#  - 127.0.0.1

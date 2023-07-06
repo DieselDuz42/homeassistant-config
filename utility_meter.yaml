@@ -1,0 +1,15 @@
+
+daily_energy:
+  source: sensor.home_panel_123_1d
+  name: Daily Energy
+  cycle: daily
+  tariffs:
+    - peak
+    - offpeak
+monthly_energy:
+  source: sensor.home_panel_123_1d
+  name: Monthly Energy
+  cycle: monthly
+  tariffs:
+    - peak
+    - offpeak

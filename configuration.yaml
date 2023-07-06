@@ -3,7 +3,21 @@ default_config:
 
 homeassistant: !include homeassistant.yaml
 
-
+logger:
+  default: info
+  logs:
+    homeassistant.core: debug
+    homeassistant.components.zha: debug
+    bellows.zigbee.application: debug
+    bellows.ezsp: debug
+    zigpy: debug
+    zigpy_deconz.zigbee.application: debug
+    zigpy_deconz.api: debug
+    zigpy_xbee.zigbee.application: debug
+    zigpy_xbee.api: debug
+    zigpy_zigate: debug
+    zigpy_znp: debug
+    zhaquirks: debug
 
 # Load frontend themes from the themes folder
 frontend:
@@ -16,6 +30,9 @@ tts:
 recorder: !include recorder.yaml
     
 automation: !include automations.yaml
+automation mine: !include_dir_merge_list automation/
+#template: !include_dir_merge_list template/
+
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
@@ -26,3 +43,5 @@ input_select: !include_dir_named input_select/
 input_datetime: !include_dir_named input_datetime/
 input_text: !include_dir_named input_text/
 timer: !include_dir_named timers/
+utility_meter: !include utility_meter.yaml
+http: !include http.yaml

@@ -7,3 +7,5 @@ language: en
 currency: USD
 time_zone: America/Detroit
 unit_system: imperial
+
+auth_providers: !include auth_providers.yaml
