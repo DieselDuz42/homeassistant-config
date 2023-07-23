@@ -6,22 +6,14 @@ homeassistant: !include homeassistant.yaml
 logger:
   default: info
   logs:
-    homeassistant.core: debug
-    homeassistant.components.zha: debug
-    bellows.zigbee.application: debug
-    bellows.ezsp: debug
-    zigpy: debug
-    zigpy_deconz.zigbee.application: debug
-    zigpy_deconz.api: debug
-    zigpy_xbee.zigbee.application: debug
-    zigpy_xbee.api: debug
-    zigpy_zigate: debug
-    zigpy_znp: debug
-    zhaquirks: debug
+    homeassistant.helpers.template: error
+
 
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes
+#lovelace:
+#  mode: yaml
 
 # Text to speech
 tts:
@@ -31,11 +23,12 @@ recorder: !include recorder.yaml
     
 automation: !include automations.yaml
 automation mine: !include_dir_merge_list automation/
-#template: !include_dir_merge_list template/
+template: !include_dir_merge_list template/
+sensor: !include_dir_merge_list sensors/
+#binary_sensor: !include_dir_merge_list binary_sensors/
 
 script: !include scripts.yaml
 scene: !include scenes.yaml
-
 
 input_number: !include_dir_named input_number/
 input_boolean: !include_dir_named input_boolean/
@@ -45,3 +38,33 @@ input_text: !include_dir_named input_text/
 timer: !include_dir_named timers/
 utility_meter: !include utility_meter.yaml
 http: !include http.yaml
+
+binary_sensor:
+  - platform: ping
+    host: 1.1.1.1
+    count: 2
+    scan_interval: 30
+  - platform: ping
+    host: 8.8.8.8
+    count: 2
+    scan_interval: 30
+    
+# Example configuration.yaml entry
+schedule:
+  peak_power:
+    name: "Peak Power"
+    monday:
+      - from: "14:00:00"
+        to: "18:00:00"
+    tuesday:
+      - from: "14:00:00"
+        to: "18:00:00"
+    wednesday:
+      - from: "14:00:00"
+        to: "18:00:00"
+    thursday:
+      - from: "14:00:00"
+        to: "18:00:00"
+    friday:
+      - from: "14:00:00"
+        to: "18:00:00"

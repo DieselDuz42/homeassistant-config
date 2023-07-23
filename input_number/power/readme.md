@@ -1,1 +1,0 @@
-# https://community.home-assistant.io/t/an-approach-to-both-detailed-and-group-level-energy-management/393261/12

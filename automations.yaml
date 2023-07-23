@@ -1,1 +1,45 @@
-[]
+- id: '1689556718326'
+  alias: Tech Support
+  description: Reboots network when internet down for 2 min
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.ping_1_1_1_1
+    - binary_sensor.ping_8_8_8_8
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+  condition: []
+  action:
+  - type: turn_off
+    device_id: 1a43c312a937f400bf78a7ec78bf6a1a
+    entity_id: 1d2c9e2f9c003b5a7efed2c0fc64ad82
+    domain: switch
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 45
+      milliseconds: 0
+  - type: turn_on
+    device_id: 1a43c312a937f400bf78a7ec78bf6a1a
+    entity_id: 1d2c9e2f9c003b5a7efed2c0fc64ad82
+    domain: switch
+  mode: single
+- id: '1689711080074'
+  alias: Laundry light
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.laundry_door_opening
+    from:
+  condition: []
+  action:
+  - service: switch.toggle
+    data: {}
+    target:
+      entity_id: switch.laundry_strip_plug_1
+  mode: single

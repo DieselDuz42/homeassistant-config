@@ -4,18 +4,20 @@
 
 # You can whitelist files/folders with !, these will not be ignored.
 !*.yaml
-.gitignore
+!.gitignore
 !*.md
 
 
+# Whitelist directories
 !/input_**/**
-
+!/packages/**
 !/lovelace/**
 !/sensors/**
 !/template/**
 !/timers/**
 !/scripts/**
 !/shell_commands/**
+!automation/**
 
 
 # Ignore folders.
@@ -30,3 +32,4 @@
 ip_bans.yaml
 secrets.yaml
 known_devices.yaml
+*
