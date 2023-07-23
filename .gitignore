@@ -9,16 +9,16 @@
 
 
 # Whitelist directories
+!/packages**/**
+!/lovelace**/**
+!/sensors**/**
+!/template**/**
+!/timers**/**
+#!/scripts/**
+#!/shell_commands/**
+!/automation**/**
 !/input_**/**
-!/packages/**
-!/lovelace/**
-!/sensors/**
-!/template/**
-!/timers/**
-!/scripts/**
-!/shell_commands/**
-!automation/**
-
+!/binary sensors**/**
 
 # Ignore folders.
 .storage
@@ -32,4 +32,3 @@
 ip_bans.yaml
 secrets.yaml
 known_devices.yaml
-*

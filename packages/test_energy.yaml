@@ -1,0 +1,170 @@
+#
+# Getting all of the configs into one package
+#
+automation:
+  ################  Update power tariffs for all circuits  ###############
+  - alias: "Update Power Tariffs"
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: "call_service"
+        event_data:
+          domain: "group"
+          service: "reload"
+      - platform: state
+        entity_id: sensor.energy_tou_tariff
+      - platform: time_pattern
+        seconds: "/5"
+    action:
+      - service: select.select_option
+        data:
+          entity_id: group.utility_meters
+          tariff: '{{ states("sensor.energy_tou_tariff") }}'
+  ################  Create and update power groupings for circuits and devices  ###############
+  - alias: "Update Utility Groups"
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: "call_service"
+        event_data:
+          domain: "group"
+          service: "reload"
+    action:
+      - service: homeassistant.update_entity
+        data:
+          object_id: utility_meters
+          entities: >
+            {% set ns = namespace(entities=[]) %}
+            {% for s in states.utility_meter if s.object_id.endswith('_daily_total_energy') or s.object_id.endswith('_monthly_total_energy') %}
+              {% set ns.entities = ns.entities + [ s.entity_id ] %}
+            {% endfor %}
+            {{ ns.entities }}
+template:
+- trigger:
+    - platform: time_pattern
+      seconds: "/1"
+    - platform: homeassistant
+      event: start
+    - platform: event
+      event_type: "call_service"
+      event_data:
+        domain: "template"
+        service: "reload"
+  sensor:
+    - name: energy_tou_tariff
+      unique_id: select_tariff
+      icon: mdi:chart-bar
+      state: >
+        {% set n = now() %}
+        {% set summer = [ 6, 7, 8, 9] %}
+        {% set winter = [10, 11, 12, 1, 2, 3, 4, 5] %} 
+        {% set peak_start = 14 %}
+        {% set peak_end = 19 %}
+        {% if n.month in summer and n.isoweekday() <6: %}
+            {% if peak_start >= n.hour <= peak_end: %}onpeak
+            {% else %}offpeak
+            {% endif %}
+        {% else %}
+            {% if n.month in winter %} winter
+            {% else %} offpeak
+            {% endif %}
+        {% endif %}
+    - name: energy_kwh_cost
+      unique_id: 97041eea00d0448caf9e300ee08694a5
+      unit_of_measurement: "USD/kWh"
+      icon: mdi:currency-usd
+      state: >
+        {% if is_state('sensor.energy_tou_tariff', 'onpeak') %} {{ states('input_number.energy_tou_rate_onpeak') | float }}
+        {% elif is_state('sensor.energy_tou_tariff', 'winter') %} {{ states('input_number.energy_tou_rate_winter') | float }}
+        {% elif is_state('sensor.energy_tou_tariff', 'offpeak') %} {{ states('input_number.energy_tou_rate_offpeak') | float }}
+        {% endif %}
+  sensors:
+  ################  Calculate daily energy cost for each grouping  ###############
+    electric_home_daily_total_energy_cost:
+      friendly_name: "Electric Home Daily Total Energy Cost"
+      value_template: >-
+        {{ max((states('sensor.electric_home_daily_total_energy_onpeak') | float(2) * states('input_number.energy_tou_rate_onpeak') | float(2))
+          + (states('sensor.electric_home_daily_total_energy_winter') | float(2) * states('input_number.energy_tou_rate_winter') | float(2))
+          + (states('sensor.electric_home_daily_total_energy_offpeak') | float(2) * states('input_number.energy_tou_rate_offpeak') | float(2)) | round(2), 0.00) }}
+      <<: &energy_cost_defaults
+        unit_of_measurement: "$"
+        icon_template: mdi:currency-usd
+  ################  Calculate monthly energy cost for each grouping  ###############
+    electric_home_monthly_total_energy_cost:
+      friendly_name: "Electric Home Monthly Total Energy Cost"
+      value_template: >-
+        {{ max((states('sensor.electric_home_monthly_total_energy_onpeak') | float(2) * states('input_number.energy_tou_rate_onpeak') | float(2))
+          + (states('sensor.electric_home_monthly_total_energy_winter') | float(2) * states('input_number.energy_tou_rate_winter') | float(2))
+          + (states('sensor.electric_home_monthly_total_energy_offpeak') | float(2) * states('input_number.energy_tou_rate_offpeak') | float(2)) | round(2), 0.00) }}
+      <<: *energy_cost_defaults
+  ################  Calculate daily energy usage for each grouping  ###############
+    electric_home_daily_total_energy_usage:
+      friendly_name: "Electric Home Daily Total Energy Usage"
+      value_template: "{{ states('sensor.electric_home_daily_total_energy_onpeak') | float(2) + states('sensor.electric_home_daily_total_energy_winter') | float(2) + states('sensor.electric_home_daily_total_energy_offpeak') | float(2) }}"
+      <<: &energy_usage_defaults
+        unit_of_measurement: "kWh"
+        icon_template: mdi:gauge
+  ################  Calculate monthly energy usage for each grouping  ###############
+    electric_home_monthly_total_energy_usage:
+      friendly_name: "Electric Home Monthly Total Energy Usage"
+      value_template: "{{ states('sensor.electric_home_monthly_total_energy_onpeak') | float(2) + states('sensor.electric_home_monthly_total_energy_winter') | float(2) + states('sensor.electric_home_monthly_total_energy_offpeak') | float(2) }}"
+      <<: *energy_usage_defaults
+# Helpers to store rates
+input_number:
+  energy_kwh_cost:
+    name: Energy kWh Cost
+    icon: mdi:currency-usd
+    mode: box
+    unit_of_measurement: "USD/kWh"
+    min: 0.001
+    max: 1
+
+  # June 1 Sept 30  weekends, week days 12am - 1:59pm 6:01pm - 12am $0.167 / kWh
+  energy_tou_rate_offpeak:
+    name: Energy kWh Cost Off-Peak
+    icon: mdi:currency-usd
+    mode: box
+    unit_of_measurement: "USD/kWh"
+    min: 0.001
+    max: 1
+    initial: 0.167
+
+  
+  # June 1 Sept 30  weekends, week days 2pm - 6pm $0.223 / kWh
+  energy_tou_rate_onpeak:
+    name: Energy kWh Cost On-Peak
+    icon: mdi:currency-usd
+    mode: box
+    unit_of_measurement: "USD/kWh"
+    min: 0.001
+    max: 1
+    initial: 0.223
+    
+  
+  # Oct 1 to May 32 $0.159 / kWh
+  energy_tou_rate_winter:
+    name: Energy kWh Cost Winter
+    icon: mdi:currency-usd
+    mode: box
+    unit_of_measurement: "USD/kWh"
+    min: 0.001
+    max: 1
+    initial: 0.159
+utility_meter:
+  ################  Track daily consumption for each grouping  ###############
+  electric_home_daily_total_energy:
+    source: sensor.energy_spent
+    cycle: daily
+    <<: &utility_meter_tariff_defaults
+      tariffs:
+        - offpeak
+        - winter
+        - onpeak
+  
+  ################  Track monthly consumption for each grouping  ###############
+  electric_home_monthly_total_energy:
+    source: sensor.energy_spent
+    cycle: monthly
+    <<: *utility_meter_tariff_defaults

@@ -1,0 +1,7 @@
+# Make kWh sensor from 1 min reading from Emporia
+- platform: integration
+  source: sensor.home_panel_123_1min
+  name: energy_spent
+  unit_prefix: k
+  round: 2
+  scan_interval: 60

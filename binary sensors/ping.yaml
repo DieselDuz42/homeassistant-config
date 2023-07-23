@@ -1,0 +1,9 @@
+# Checks if Cloudflare and Google DNS servers are reachable
+- platform: ping
+  host: 1.1.1.1
+  count: 2
+  scan_interval: 30
+- platform: ping
+  host: 8.8.8.8
+  count: 2
+  scan_interval: 30

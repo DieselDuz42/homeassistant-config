@@ -25,7 +25,7 @@ automation: !include automations.yaml
 automation mine: !include_dir_merge_list automation/
 template: !include_dir_merge_list template/
 sensor: !include_dir_merge_list sensors/
-#binary_sensor: !include_dir_merge_list binary_sensors/
+binary_sensor: !include_dir_merge_list binary_sensors/
 
 script: !include scripts.yaml
 scene: !include scenes.yaml
@@ -38,33 +38,3 @@ input_text: !include_dir_named input_text/
 timer: !include_dir_named timers/
 utility_meter: !include utility_meter.yaml
 http: !include http.yaml
-
-binary_sensor:
-  - platform: ping
-    host: 1.1.1.1
-    count: 2
-    scan_interval: 30
-  - platform: ping
-    host: 8.8.8.8
-    count: 2
-    scan_interval: 30
-    
-# Example configuration.yaml entry
-schedule:
-  peak_power:
-    name: "Peak Power"
-    monday:
-      - from: "14:00:00"
-        to: "18:00:00"
-    tuesday:
-      - from: "14:00:00"
-        to: "18:00:00"
-    wednesday:
-      - from: "14:00:00"
-        to: "18:00:00"
-    thursday:
-      - from: "14:00:00"
-        to: "18:00:00"
-    friday:
-      - from: "14:00:00"
-        to: "18:00:00"
